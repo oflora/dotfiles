@@ -1,12 +1,32 @@
+#+title: Configuración Doom EMACS
+
+* Miscelánea
+** Configuración básica
+*** Direcciones de los directorios.
+
+#+begin_src elisp
 (setq org-directory "~/Data/org/")
 (setq org-roam-directory "~/Data/org/roam")
 (setq org-agenda-files "~/Data/org/agenda")
 (citar-notes-paths '("~/Documents/org/notes"))
+#+end_src
 
+*** Añadir custom load path
+
+#+begin_src elisp
 (add-to-list 'load-path "~/.config/doom/lisp")
+#+end_src
 
+*** Estilo de la numeración de linea.
+
+#+begin_src elisp
 (setq display-line-numbers-type 'relative)
+#+end_src
 
+** Better defaults (Tecosaur)
+*** Configuraciones varias
+
+#+begin_src elisp
 (setq-default
  delete-by-moving-to-trash t                      ; Delete files to trash
  window-combination-resize t                      ; take new window space from all other windows (not just current)
@@ -27,16 +47,28 @@
   (display-battery-mode 1))                       ; it's nice to know how much power you have
 
 (global-subword-mode 1)                           ; Iterate through CamelCase words
+#+end_src
 
+*** Cambiar tamaño de ventana
+
+#+begin_src elisp
 (add-to-list 'default-frame-alist '(height . 24))
 (add-to-list 'default-frame-alist '(width . 80))
+#+end_src
 
+*** Preguntar por buffer despues de dividir ventana
+
+#+begin_src elisp
 (setq evil-vsplit-window-right t
       evil-split-window-below t)
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
+#+end_src
 
+*** Titulo de ventana
+
+#+begin_src elisp
 (setq frame-title-format
       '(""
         (:eval
@@ -51,12 +83,30 @@
            (unless (string= "-" project-name)
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
+#+end_src
+
+*** Which keyword
+
+#+begin_src elisp
 (setq which-key-idle-delay 0.5) ;; I need the help, I really do
+#+end_src
 
+** Configuración corrector ortográfico
+*** Corregir lineas rojas
+
+#+begin_src elisp
 (setq ispell-program-name "hunspell")
+#+end_src
 
+*** Diccionario de hunspell en castellano.
+
+#+begin_src elisp
 (setq ispell-dictionary "es_ES")
+#+end_src
 
+** Autocompletado (company)
+*** Configuración básica
+#+begin_src elisp
 (after! company
   (setq company-idle-delay 0.5
         company-minimum-prefix-length 2)
@@ -65,9 +115,19 @@
 
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
+#+end_src
 
-(setq company-ispell-dictionary (file-truename "~/Documents/dict.txt"))
+*** company-ispell a castellano (muajajajaja)
 
+#+begin_src elisp
+  (setq company-ispell-dictionary (file-truename "~/Documents/dict.txt"))
+#+end_src
+
+*  Estética
+** Fuentes y temas
+*** Fuentes
+
+#+begin_src elisp
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
@@ -75,31 +135,61 @@
 
 (setq doom-font (font-spec :family "FiraCode" :size 16 :weight 'regular)
       doom-variable-pitch-font (font-spec :family "Ubuntu" :style "Regular" :size 30 :weight 'regular))
+#+end_src
 
+*** Temas
+
+Establecer el tema en base a la hora del día, se emplea un tema claro para las horas diurnas y una oscuro para la noche. Utiliza la librería _theme-changer.el_
+
+#+begin_src elisp
 (setq calendar-location-name "Valencia, VAL")
 (setq calendar-latitude 39.47)
 (setq calendar-longitude -04.00)
 
 (require 'theme-changer)
 (change-theme 'material-light 'material)
+#+end_src
 
+Cambiar la imagen de inicio de Emacs.
+
+#+begin_src elisp
 (setq fancy-splash-image "~/Pictures/splash.png")
+#+end_src
 
+Cambiar la transparencia de los buffers.
+
+#+begin_src elisp
 (set-frame-parameter (selected-frame) 'alpha '(95 95))
 (add-to-list 'default-frame-alist '(alpha 95 95))
+#+end_src
 
+** Packages
+*** pdf-tools
+
+Ver los pdfs con el tema establecido en Emacs
+
+#+begin_src elisp
 (use-package! pdf-view
   :hook (pdf-tools-enabled . pdf-view-themed-minor-mode)
   :config
   (setq pdf-view-use-scaling t
         pdf-view-use-imagemagick nil
         pdf-view-display-size 'fit-page))
+#+end_src
+*** info-colors
 
+#+begin_src elisp
 (use-package! info-colors
   :commands (info-colors-fontify-node))
 
 (add-hook 'Info-selection-hook 'info-colors-fontify-node)
+#+end_src
 
+* ORG
+** Estética
+*** Custom headers
+
+#+begin_src elisp
 (after! org
   (custom-set-faces!
     '((org-block) :background nil)
@@ -119,18 +209,35 @@
       :family "Roboto"
       :height 250
       :weight bold)))
+#+end_src
 
+#+RESULTS:
+| doom--customize-themes-h-28 | doom--customize-themes-h-29 | doom--customize-themes-h-30 | doom--customize-themes-h-50 | doom--customize-themes-h-51 |
+
+*** Mejora de los bullets de org
+
+#+begin_src elisp
 (setq org-hide-emphasis-markers t)
 
 (use-package org-bullets
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+end_src
 
+*** Renderizado
+
+Previsualizar los fragmentos de \(LaTeX\)
+
+#+begin_src elisp
 (use-package! org-fragtog
   :after org
   :hook (org-mode . org-fragtog-mode)
   )
+#+end_src
 
+ Para el resto emplear org-appear. Oculta los elementos de énfasis propios de org
+
+#+begin_src elisp
 ;; Org appear for everything else
 (use-package! org-appear
   :after org
@@ -139,7 +246,10 @@
            org-appear-autolinks t
            org-appear-autoentities t
            org-appear-autosubmarkers t ))
+#+end_src
+*** org-modern
 
+#+begin_src elisp
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :config
@@ -211,7 +321,12 @@
           ("caption" . "☰")
           ("results" . "🠶")))
   (custom-set-faces! '(org-modern-statistics :inherit org-checkbox-statistics-todo)))
+#+end_src
 
+** Roam
+*** org-roam-ui
+
+#+begin_src elisp
 (use-package! websocket
   :after org-roam)
 
@@ -226,12 +341,18 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+#+end_src
+*** org-roam-bibtex
 
+#+begin_src elisp
 (use-package! org-roam-bibtex
   :after org-roam
   :config
   (require 'org-ref)) ; optional: if using Org-ref v2 or v3 citation link
+#+end_src
+*** citar-org-roam
 
+#+begin_src elisp
 (require 'citar-org-roam)
 (citar-register-notes-source
  'orb-citar-source (list :name "Org-Roam Notes"
@@ -243,8 +364,39 @@
         :annotate #'citar-org-roam--annotate))
 
 (setq citar-notes-source 'orb-citar-source)
+#+end_src
 
-;; Citar to access bibliographies
+** Citas
+*** Configuración básica
+**** Defunct
+#+begin_src elisp :tangle no
+(use-package citar
+  :custom
+  (citar-bibliography '("~/Documents/biblio/biblio.bib"))
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  (markdown-mode . citar-capf-setup))
+#+end_src
+
+#+begin_src elisp :tangle no
+(org-cite-global-bibliography '("~/Documents/biblio/biblio.bib"))
+(org-cite-insert-processor 'citar)
+(org-cite-follow-processor 'citar)
+(org-cite-activate-processor 'citar)
+(citar-bibliography '("~/Documents/biblio/biblio.bib"))
+(citar-notes-paths '("~/Documents/org/notes"))
+(citar-symbols
+ `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+   (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+   (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+(citar-symbol-separator "  ")
+#+end_src
+
+**** Functional
+
+#+begin_src elisp
+  ;; Citar to access bibliographies
   (use-package citar
     :custom
     (org-cite-global-bibliography
@@ -264,12 +416,20 @@
 (setq bibtex-completion-bibliography (directory-files
       (concat (getenv "HOME") "/Documents/biblio/") t
       "^[A-Z|a-z|0-9].+.bib$"))
+#+end_src
 
+Configuración citar-embark, permite el acceso contextual a la información contenida en las citas.
+
+#+begin_src elisp
 (use-package citar-embark
   :after citar embark
   :no-require
   :config (citar-embark-mode))
+#+end_src
 
+*** org-cite-csl-activate
+
+#+begin_src elisp
 (use-package! oc-csl-activate
   :after oc
   :config
@@ -288,16 +448,31 @@
           (org-cite-activate (point-max)))
         (org-cite-csl-activate-render-all)))
     (fmakunbound #'+org-cite-csl-activate/enable)))
+#+end_src
 
+*** Zotero
+
+Utilizar estilos CSL de Zotero
+
+#+begin_src elisp
 (after! oc-csl
   (setq org-cite-csl-styles-dir "~/Zotero/styles"))
+#+end_src
 
+*** Scihub
+
+#+begin_src elisp
 (use-package! scihub
  :init
  (setq scihub-download-directory "~/Documents/biblio/articles"
        scihub-open-after-download t
        scihub-fetch-domain 'scihub-fetch-domains-lovescihub))
+#+end_src
 
+** Misc
+*** Outliners on the side
+
+#+begin_src elisp
 (use-package! org-ol-tree
   :after org
   :commands org-ol-tree
@@ -310,13 +485,90 @@
       :after org
       :localleader
       :desc "Outline" "O" #'org-ol-tree)
+#+end_src
 
+*** org-tranclusion
+
+Añadir link directo a fragmento de texto en otro archivo org, se autoactualiza al editar el fragmento original.
+
+#+begin_src elisp
 (use-package! org-transclusion
   :after org-roam
   )
+#+end_src
 
+* Configuración lenguajes
+** LSP
+*** Activar LSP en bloques de babel
+Por defecto los servidores LSP no funcionan en los bloques de src. Extraido de TECOSAUR config
+
+#+begin_src elisp :tangle no
+(cl-defmacro lsp-org-babel-enable (lang)
+  "Support LANG in org source code block."
+  (setq centaur-lsp 'lsp-mode)
+  (cl-check-type lang stringp)
+  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
+         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
+    `(progn
+       (defun ,intern-pre (info)
+         (let ((file-name (->> info caddr (alist-get :file))))
+           (unless file-name
+             (setq file-name (make-temp-file "babel-lsp-")))
+           (setq buffer-file-name file-name)
+           (lsp-deferred)))
+       (put ',intern-pre 'function-documentation
+            (format "Enable lsp-mode in the buffer of org source block (%s)."
+                    (upcase ,lang)))
+       (if (fboundp ',edit-pre)
+           (advice-add ',edit-pre :after ',intern-pre)
+         (progn
+           (defun ,edit-pre (info)
+             (,intern-pre info))
+           (put ',edit-pre 'function-documentation
+                (format "Prepare local buffer environment for org source block (%s)."
+                        (upcase ,lang))))))))
+(defvar org-babel-lang-list
+  '("go" "python" "ipython" "bash" "sh"))
+(dolist (lang org-babel-lang-list)
+  (eval `(lsp-org-babel-enable ,lang)))
+#+end_src
+
+** ESS
+*** Configuración general
+
+#+begin_src elisp :tangle no
+(with-eval-after-load 'ess-mode
+  (define-key ess-mode-map ";" 'ess-insert-assign)
+  (define-key inferior-ess-mode-map ";" 'ess-insert-assign)
+  ;; Set ESS up the way you like it
+  (setq-default inferior-R-args "--no-restore-history --no-restore --no-save")
+  (add-hook 'ess-mode-hook (lambda () (auto-fill-mode 1)))
+  (setq ess-ask-for-ess-directory t)
+  ;; (when (spacemacs/system-is-mac)
+  ;;   ((setq inferior-ess-r-program "/usr/local/bin/R")))
+  ;; this should only need setting in windows
+  (setq ess-local-process-name "radian")
+  ;; Default indentation style as RStudio (spacemacs sets a bunch of dumb stuff)
+  (add-hook 'ess-mode-hook (lambda ()
+                             (setq
+                              ess-first-continued-statement-offset 'straight
+                              ess-continued-statement-offset 'straight
+                              ess-default-style 'RStudio-
+                              ess-indent-offset 4
+                              ess-offset-arguments 'prev-line
+                              ess-align-blocks nil
+                              ess-indent-with-fancy-comments nil)
+                             )
+            )
+  )
+#+end_src
+
+#+begin_src elisp
 (set-company-backend! 'ess-r-mode '(company-R-args company-R-objects company-dabbrev-code :separate))
+#+end_src
+*** Syntax highlighting
 
+#+begin_src elisp
 (setq ess-eval-visibly 'nowait)
 
 (setq ess-R-font-lock-keywords
@@ -332,7 +584,11 @@
         (ess-fl-keyword:delimiters . t)
         (ess-fl-keyword:= . t)
         (ess-R-fl-keyword:F&T . t)))
+#+end_src
 
+*** Ligaduras
+
+#+begin_src elisp
 (after! ess-r-mode
 (appendq! +ligatures-extra-symbols
             '(:assign "⟵"
@@ -356,3 +612,6 @@
     ;; Other
     :assign "<-"
     :multiply "%*%"))
+#+end_src
+
+** Markdown
