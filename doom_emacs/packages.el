@@ -121,3 +121,6 @@
 ;; Mermaid diagrams
 (package! mermaid-mode)
 (package! ob-mermaid)
+
+;; Quarto mode
+(package! quarto-mode)

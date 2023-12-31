@@ -5,10 +5,10 @@
 *** Direcciones de los directorios.
 
 #+begin_src elisp
-(setq org-directory "~/Data/org/")
-(setq org-roam-directory "~/Data/org/roam")
-(setq org-agenda-files "~/Data/org/agenda")
-(citar-notes-paths '("~/Documents/org/notes"))
+(setq org-directory "~/Documentos/org/")
+(setq org-roam-directory "~/Documentos/org/roam")
+(setq org-agenda-files "~/Documentos/org/agenda")
+;(citar-notes-paths '("~/Documentos/org/notes"))
 #+end_src
 
 *** Añadir custom load path
@@ -120,7 +120,7 @@
 *** company-ispell a castellano (muajajajaja)
 
 #+begin_src elisp
-  (setq company-ispell-dictionary (file-truename "~/Documents/dict.txt"))
+  (setq company-ispell-dictionary (file-truename "~/Documentos/dict.txt"))
 #+end_src
 
 *  Estética
@@ -133,7 +133,7 @@
   :config
   (setq mixed-pitch-face 'variable-pitch))
 
-(setq doom-font (font-spec :family "FiraCode" :size 16 :weight 'regular)
+(setq doom-font (font-spec :family "Firacode" :size 16 :style"medium" :weight 'medium)
       doom-variable-pitch-font (font-spec :family "Ubuntu" :style "Regular" :size 30 :weight 'regular))
 #+end_src
 
@@ -153,14 +153,14 @@ Establecer el tema en base a la hora del día, se emplea un tema claro para las 
 Cambiar la imagen de inicio de Emacs.
 
 #+begin_src elisp
-(setq fancy-splash-image "~/Pictures/splash.png")
+;(setq fancy-splash-image "~/Pictures/splash.png")
 #+end_src
 
 Cambiar la transparencia de los buffers.
 
 #+begin_src elisp
-(set-frame-parameter (selected-frame) 'alpha '(95 95))
-(add-to-list 'default-frame-alist '(alpha 95 95))
+(set-frame-parameter (selected-frame) 'alpha-background 85)
+(add-to-list 'default-frame-alist '(alpha-background . 85))
 #+end_src
 
 ** Packages
@@ -324,6 +324,29 @@ Previsualizar los fragmentos de \(LaTeX\)
 #+end_src
 
 ** Roam
+*** org-roam base config
+
+#+begin_src elisp
+(use-package org-roam
+  :ensure t
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-completion-everywhere t)
+  (org-roam-capture-templates
+   '(("d" "default" plain
+      "%?"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+      :unnarrowed t)))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point))
+  :config
+  (org-roam-setup))
+#+end_src
+
 *** org-roam-ui
 
 #+begin_src elisp
@@ -365,14 +388,13 @@ Previsualizar los fragmentos de \(LaTeX\)
 
 (setq citar-notes-source 'orb-citar-source)
 #+end_src
-
 ** Citas
 *** Configuración básica
 **** Defunct
 #+begin_src elisp :tangle no
 (use-package citar
   :custom
-  (citar-bibliography '("~/Documents/biblio/biblio.bib"))
+  (citar-bibliography '("~/Documentos/biblio/biblio.bib"))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup)
@@ -380,12 +402,12 @@ Previsualizar los fragmentos de \(LaTeX\)
 #+end_src
 
 #+begin_src elisp :tangle no
-(org-cite-global-bibliography '("~/Documents/biblio/biblio.bib"))
+(org-cite-global-bibliography '("~/Documentos/biblio/biblio.bib"))
 (org-cite-insert-processor 'citar)
 (org-cite-follow-processor 'citar)
 (org-cite-activate-processor 'citar)
-(citar-bibliography '("~/Documents/biblio/biblio.bib"))
-(citar-notes-paths '("~/Documents/org/notes"))
+(citar-bibliography '("~/Documentos/biblio/biblio.bib"))
+(citar-notes-paths '("~/Documentos/org/notes"))
 (citar-symbols
  `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
    (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
@@ -401,7 +423,7 @@ Previsualizar los fragmentos de \(LaTeX\)
     :custom
     (org-cite-global-bibliography
      (directory-files
-      (concat (getenv "HOME") "/Documents/biblio/") t
+      (concat (getenv "HOME") "/Documentos/biblio/") t
       "^[A-Z|a-z|0-9].+.bib$"))
     (citar-bibliography org-cite-global-bibliography)
     (org-cite-insert-processor 'citar)
@@ -414,7 +436,7 @@ Previsualizar los fragmentos de \(LaTeX\)
            ("C-c b" . #'org-cite-insert))))
 
 (setq bibtex-completion-bibliography (directory-files
-      (concat (getenv "HOME") "/Documents/biblio/") t
+      (concat (getenv "HOME") "/Documentos/biblio/") t
       "^[A-Z|a-z|0-9].+.bib$"))
 #+end_src
 
@@ -464,7 +486,7 @@ Utilizar estilos CSL de Zotero
 #+begin_src elisp
 (use-package! scihub
  :init
- (setq scihub-download-directory "~/Documents/biblio/articles"
+ (setq scihub-download-directory "~/Documentos/biblio/articles"
        scihub-open-after-download t
        scihub-fetch-domain 'scihub-fetch-domains-lovescihub))
 #+end_src

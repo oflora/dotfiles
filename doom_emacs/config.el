@@ -1,7 +1,7 @@
-(setq org-directory "~/Data/org/")
-(setq org-roam-directory "~/Data/org/roam")
-(setq org-agenda-files "~/Data/org/agenda")
-(citar-notes-paths '("~/Documents/org/notes"))
+(setq org-directory "~/Documentos/org/")
+(setq org-roam-directory "~/Documentos/org/roam")
+(setq org-agenda-files "~/Documentos/org/agenda")
+;(citar-notes-paths '("~/Documentos/org/notes"))
 
 (add-to-list 'load-path "~/.config/doom/lisp")
 
@@ -66,14 +66,14 @@
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
 
-(setq company-ispell-dictionary (file-truename "~/Documents/dict.txt"))
+(setq company-ispell-dictionary (file-truename "~/Documentos/dict.txt"))
 
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
   (setq mixed-pitch-face 'variable-pitch))
 
-(setq doom-font (font-spec :family "FiraCode" :size 16 :weight 'regular)
+(setq doom-font (font-spec :family "Firacode" :size 16 :style"medium" :weight 'medium)
       doom-variable-pitch-font (font-spec :family "Ubuntu" :style "Regular" :size 30 :weight 'regular))
 
 (setq calendar-location-name "Valencia, VAL")
@@ -83,10 +83,10 @@
 (require 'theme-changer)
 (change-theme 'material-light 'material)
 
-(setq fancy-splash-image "~/Pictures/splash.png")
+;(setq fancy-splash-image "~/Pictures/splash.png")
 
-(set-frame-parameter (selected-frame) 'alpha '(95 95))
-(add-to-list 'default-frame-alist '(alpha 95 95))
+(set-frame-parameter (selected-frame) 'alpha-background 85)
+(add-to-list 'default-frame-alist '(alpha-background . 85))
 
 (use-package! pdf-view
   :hook (pdf-tools-enabled . pdf-view-themed-minor-mode)
@@ -212,6 +212,25 @@
           ("results" . "🠶")))
   (custom-set-faces! '(org-modern-statistics :inherit org-checkbox-statistics-todo)))
 
+(use-package org-roam
+  :ensure t
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-completion-everywhere t)
+  (org-roam-capture-templates
+   '(("d" "default" plain
+      "%?"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+      :unnarrowed t)))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point))
+  :config
+  (org-roam-setup))
+
 (use-package! websocket
   :after org-roam)
 
@@ -249,7 +268,7 @@
     :custom
     (org-cite-global-bibliography
      (directory-files
-      (concat (getenv "HOME") "/Documents/biblio/") t
+      (concat (getenv "HOME") "/Documentos/biblio/") t
       "^[A-Z|a-z|0-9].+.bib$"))
     (citar-bibliography org-cite-global-bibliography)
     (org-cite-insert-processor 'citar)
@@ -262,7 +281,7 @@
            ("C-c b" . #'org-cite-insert))))
 
 (setq bibtex-completion-bibliography (directory-files
-      (concat (getenv "HOME") "/Documents/biblio/") t
+      (concat (getenv "HOME") "/Documentos/biblio/") t
       "^[A-Z|a-z|0-9].+.bib$"))
 
 (use-package citar-embark
@@ -294,7 +313,7 @@
 
 (use-package! scihub
  :init
- (setq scihub-download-directory "~/Documents/biblio/articles"
+ (setq scihub-download-directory "~/Documentos/biblio/articles"
        scihub-open-after-download t
        scihub-fetch-domain 'scihub-fetch-domains-lovescihub))
 
